@@ -1,0 +1,238 @@
+<template>
+  <b-modal
+    ref="modal"
+    :ok-title="isEdit ? 'Cập nhật' : 'Thêm mới'"
+    :title="isEdit ? 'Cập nhật deposit' : 'Thêm deposit'"
+    :no-enforce-focus="true"
+    :no-close-on-backdrop="true"
+    @ok="handleModalOk"
+    @hidden="handleModalHide"
+    cancel-title="Hủy bỏ"
+    size="lg"
+  >
+    <validation-observer ref="observer" class="kt-form">
+      <!-- <select2-with-validation
+        :disable="true"
+        :required="true"
+        v-model="form.typeObject"
+        :options="typeOptions"
+        :searchable="false"
+        label="Type"
+        data-vv-as="Type"
+        placeholder="Type"
+        text-field="text"
+        id-field="id"
+        rules="required"
+        name="Type"
+      /> -->
+
+      <b-text-input-with-validation
+        v-model="form.ref"
+        :required="true"
+        :error="vForm.errors.get('ref')"
+        :min="0"
+        placeholder="Ref"
+        label="Ref"
+        rules="required"
+        name="ref"
+      />
+
+      <b-text-input-with-validation
+        v-model="form.mt5Id"
+        :error="vForm.errors.get('mt5Id')"
+        :min="0"
+        placeholder="MT5 ID"
+        label="MT5 ID"
+        name="mt5Id"
+      />
+
+      <e-text-number-input-with-validation
+        v-model="form.amount"
+        :error="vForm.errors.get('amount')"
+        :min="0"
+        placeholder="Amount"
+        label="Amount"
+        :precision="0"
+        type="number"
+        name="amount"
+      />
+
+      <b-text-input-with-validation
+        v-model="form.callbackUrl"
+        :required="true"
+        :error="vForm.errors.get('callbackUrl')"
+        :min="0"
+        placeholder="Callback"
+        label="Callback"
+        rules="required"
+        name="callbackUrl"
+      />
+
+      <b-text-input-with-validation
+        v-model="form.cancelUrl"
+        :error="vForm.errors.get('cancelUrl')"
+        :min="0"
+        placeholder="Cancel Url"
+        label="Cancel Url"
+        name="cancelUrl"
+        rules="required"
+        :required="true"
+      />
+
+      <b-text-input-with-validation
+        v-model="form.returnUrl"
+        :error="vForm.errors.get('returnUrl')"
+        :min="0"
+        placeholder="Return Url"
+        label="Return Url"
+        name="returnUrl"
+        rules="required"
+        :required="true"
+      />
+    </validation-observer>
+    <template #modal-footer="{ ok, cancel }">
+      <el-button @click="cancel()">{{ $t('button.cancel') }}</el-button>
+      <el-button type="primary" :loading="isLoadingBtn" @click="ok()">{{
+        isEdit ? $t('button.update') : $t('button.add')
+      }}</el-button>
+    </template>
+  </b-modal>
+</template>
+
+<script>
+import Form from 'vform'
+import cloneDeep from 'lodash/cloneDeep'
+import { ValidationObserver } from 'vee-validate'
+import {
+  notifyAddSuccess,
+  notifyTryAgain,
+  notifyUpdateSuccess
+} from '~/utils/bootstrap-notify'
+import BTextInputWithValidation from '~/components/base/input/BTextInputWithValidation'
+import ETextNumberInputWithValidation from '~/components/base/input/ETextNumberInputWithValidation'
+import Select2WithValidation from '~/components/base/input/Select2WithValidation'
+
+const defaultForm = {
+  typeObject: { id: 'VIRTUAL', text: 'VIRTUAL' },
+  amount: 0,
+  ref: '',
+  mt5Id: '',
+  callbackUrl: '',
+  returnUrl: '',
+  cancelUrl: ''
+}
+
+export default {
+  name: 'DepositUpsertModal',
+  components: {
+    ValidationObserver,
+    BTextInputWithValidation,
+    ETextNumberInputWithValidation,
+    Select2WithValidation
+  },
+  props: {
+    onActionSuccess: {
+      type: Function,
+      default: () => {}
+    }
+  },
+  data() {
+    return {
+      isEdit: false,
+      form: cloneDeep(defaultForm),
+      vForm: new Form(),
+      componentKey: 0,
+      isLoadingBtn: false,
+      typeOptions: [
+        { id: 'BANK', text: 'BANK' },
+        { id: 'VIRTUAL', text: 'VIRTUAL' }
+      ]
+    }
+  },
+  mounted() {},
+  methods: {
+    show(item = null) {
+      if (item) {
+        this.isEdit = true
+        this.form = cloneDeep(item)
+      }
+
+      this.$nextTick(() => {
+        this.$refs.modal.show()
+      })
+    },
+    async handleModalOk(bvModalEvt) {
+      bvModalEvt.preventDefault()
+
+      await this.validateForm()
+    },
+    handleModalHide(bvModalEvt) {
+      this.form = cloneDeep(defaultForm)
+      this.vForm = new Form(this.form)
+      this.isEdit = false
+    },
+    async validateForm() {
+      const isValid = await this.$refs.observer.validate()
+      if (isValid) {
+        this.isLoadingBtn = true
+        if (this.isEdit) {
+          await this.updateItem()
+        } else {
+          await this.addItem()
+        }
+      }
+    },
+    async addItem() {
+      try {
+        this.form.type = this.form.typeObject.id
+        this.vForm = new Form(this.form)
+        const res = await this.vForm.post(
+          this.$axios.defaults.baseURL + '/admin/deposit/'
+        )
+        if (res.data) {
+          window.open(
+            res.data?.paymentUrl ? res.data.paymentUrl : res.data.redirectUrl,
+            '_blank',
+            'noreferrer'
+          )
+        }
+        this.isLoadingBtn = false
+        notifyAddSuccess('deposit')
+        this.$refs.modal.hide()
+        this.onActionSuccess()
+      } catch (e) {
+        this.isLoadingBtn = false
+        if (e.response) {
+          if (status !== 422) {
+            notifyTryAgain()
+          }
+        } else {
+          notifyTryAgain()
+        }
+      }
+    },
+    async updateItem() {
+      try {
+        this.form.type = this.form.typeObject.id
+        this.vForm = new Form(this.form)
+        await this.vForm.patch(
+          this.$axios.defaults.baseURL + '/admin/deposit/' + this.form.id
+        )
+        this.isLoadingBtn = false
+        notifyUpdateSuccess('deposit')
+        this.$refs.modal.hide()
+        this.onActionSuccess()
+      } catch (e) {
+        this.isLoadingBtn = false
+        if (e.response) {
+          if (status !== 422) {
+            notifyTryAgain()
+          }
+        } else {
+          notifyTryAgain()
+        }
+      }
+    }
+  }
+}
+</script>

@@ -1,0 +1,26 @@
+.div_student_selected{
+    .title {
+        font-weight: 500;
+        font-size: 1.3rem;
+        color: #48465b;
+        display: block;
+        margin-top: 15px
+    }
+    .row {
+        margin-right: 0px;
+        margin-left: 0px;
+        .item {
+            border: solid 1px black;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            padding-left: 7px;
+            padding-right: 7px;
+            position: relative;
+        }
+        .action {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+        }
+    }
+}
