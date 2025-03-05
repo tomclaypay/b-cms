@@ -420,7 +420,7 @@ export default {
         `${
           rowData.isSplitTransaction
             ? 'https://payment-gray-tau.vercel.app'
-            : 'https://online-payment.vercel.app'
+            : 'https://bigpay-payment.vercel.app'
         }/${type}?order=${rowData.hashId}`,
         '_blank',
         'noreferrer'

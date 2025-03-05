@@ -105,12 +105,7 @@ export default {
             return moment(value).format('YYYY/MM/DD HH:mm')
           }
         },
-        'MT5 ID': {
-          field: 'mt5Id',
-          callback: (value) => {
-            return value.trim().split('\t')[0]
-          }
-        },
+        'MT5 ID': 'mt5Id',
         Code: 'code',
         Ref: 'ref',
         Amount: 'amount',

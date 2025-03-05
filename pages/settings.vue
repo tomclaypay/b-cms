@@ -172,20 +172,6 @@
       name="maxBankAmount"
     />
 
-    <select2-with-validation
-          v-if="typeOptions"
-          :required="false"
-          v-model="form.typeObject"
-          :options="typeOptions"
-          :searchable="false"
-          :label="$t('virtual_type')"
-          :data-vv-as="$t('virtual_type')"
-          :placeholder="$t('virtual_type')"
-          text-field="text"
-          id-field="id"
-          name="virtyalType"
-        />
-
     <b-form-group>
       <el-switch
         v-model="form.isUnderMaintenance"
@@ -266,7 +252,6 @@ import {
 import { getServerErrors } from '@/utils/utils'
 import ETextNumberInputWithValidation from '~/components/base/input/ETextNumberInputWithValidation'
 import BTagsInputWithValidation from '~/components/base/input/BTagsInputWithValidation'
-import Select2WithValidation from '~/components/base/input/Select2WithValidation'
 
 const defaultForm = {
   isUnderMaintenance: true,
@@ -293,9 +278,7 @@ const defaultForm = {
   isAutoWithdrawal: false,
   isSplitTransaction: false,
   maxBankAmount: 0,
-  isXenditEnabled: false,
-  typeObject: { id: 'VIRTUAL', text: 'VIRTUAL' },
-  virtualType: 'VIRTUAL'
+  isXenditEnabled: false
 }
 
 export default {
@@ -304,8 +287,7 @@ export default {
     ETextNumberInputWithValidation,
     ValidationObserver,
     VueNumeric,
-    BTagsInputWithValidation,
-    Select2WithValidation
+    BTagsInputWithValidation
   },
   meta: {
     pageTitle: 'Settings'
@@ -321,12 +303,7 @@ export default {
       form: cloneDeep(defaultForm),
       vForm: new Form(),
       selected: null,
-      isReady: false,
-      typeOptions: [
-        { id: 'VIRTUAL', text: 'VIRTUAL' },
-        { id: 'XENDIT', text: 'XENDIT' },
-        { id: 'VOV5', text: 'VOV5' }
-      ]
+      isReady: false
     }
   },
   mounted() {
@@ -342,8 +319,7 @@ export default {
             depositFeePct: data.depositFeePct * 100,
             withdrawFeePct: data.withdrawFeePct * 100,
             depositCardFeePct: data.depositCardFeePct * 100,
-            depositVirtualFeePct: data.depositVirtualFeePct * 100,
-            typeObject: this.typeOptions.find(x=> x.id == data.virtualType)
+            depositVirtualFeePct: data.depositVirtualFeePct * 100
           }
           this.isReady = true
         }
@@ -368,8 +344,7 @@ export default {
           depositFeePct: this.form.depositFeePct / 100,
           withdrawFeePct: this.form.withdrawFeePct / 100,
           depositCardFeePct: this.form.depositCardFeePct / 100,
-          depositVirtualFeePct: this.form.depositVirtualFeePct / 100,
-          virtualType: this.form.typeObject.id
+          depositVirtualFeePct: this.form.depositVirtualFeePct / 100
         })
         await this.vForm.patch(this.$axios.defaults.baseURL + '/admin/settings')
         notifyUpdateSuccess('settings')

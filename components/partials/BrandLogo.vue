@@ -7,11 +7,7 @@
           src="~/assets/media/logos/logo_white.png"
           class="logo"
         /> -->
-        <span
-          class="logo"
-          style="font-weight: 900; margin-left: 5px; color: #fff;"
-          >EPAY
-        </span>
+        <span  class="logo" style="font-weight: 900; margin-left: 5px; color: #fff;">BIGPAY </span>
       </nuxt-link>
     </div>
     <div class="kt-aside__brand-tools">

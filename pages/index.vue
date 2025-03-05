@@ -4,7 +4,7 @@
       <DateRangePicker v-model="timeRange" />
     </template>
     <b-row>
-      <b-col :md="6" :sm="12" v-if="balance !== null && statistics" class="statistic">
+      <b-col :md="6" :sm="12" v-if="statistics" class="statistic">
         <div>
           <div>
             {{ $t('balance') }}
@@ -12,7 +12,7 @@
           <div>{{ balance | formatPrice }}</div>
         </div>
       </b-col>
-      <b-col :md="6" :sm="12" v-if="balance !== null && statistics" class="statistic">
+      <b-col :md="6" :sm="12" v-if="statistics" class="statistic">
         <div>
           <div>
             Floating balance
@@ -32,7 +32,7 @@
       </b-col>
     </b-row>
     <h2 class="mt-80 text-center uppercase">Giao dịch nạp</h2>
-    <b-row v-if="balance !== null && statistics">
+    <b-row v-if="statistics">
       <b-col :md="4" :sm="12" class="statistic">
         <div>
           <div>
@@ -76,7 +76,7 @@
     </b-row>
 
     <h2 class="mt-80 text-center uppercase">Giao dịch rút</h2>
-    <b-row v-if="balance !== null && statistics">
+    <b-row v-if="statistics">
       <b-col :md="6" :sm="12" class="statistic withdrawl">
         <div>
           <div>
@@ -112,7 +112,7 @@
     </b-row>
 
     <h2 class="mt-80 text-center uppercase">Cashout</h2>
-    <b-row v-if="balance !== null && statistics">
+    <b-row v-if="statistics">
       <b-col :md="4" :sm="12" class="statistic cashout">
         <div>
           <div>

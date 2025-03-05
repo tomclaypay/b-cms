@@ -11,19 +11,6 @@
     size="lg"
   >
     <validation-observer ref="observer" class="kt-form">
-      <select2-with-validation
-        v-if="isShowType"
-        v-model="form.typeObject"
-        :options="virtualTypes"
-        :searchable="false"
-        :label="$t('virtual_type')"
-        :data-vv-as="$t('virtual_type')"
-        :placeholder="$t('virtual_type')"
-        text-field="text"
-        id-field="id"
-        rules="required"
-        name="virtualType"
-      />
       <b-text-input-with-validation
         v-model="form.mt5Id"
         :error="vForm.errors.get('mt5Id')"
@@ -63,13 +50,12 @@ import {
   notifyTryAgain,
   notifyUpdateSuccess
 } from '~/utils/bootstrap-notify'
-import { DEPOSIT_SHOW_TYPE } from '~/constants/permissions'
 import BTextInputWithValidation from '~/components/base/input/BTextInputWithValidation'
 import ETextNumberInputWithValidation from '~/components/base/input/ETextNumberInputWithValidation'
 import Select2WithValidation from '~/components/base/input/Select2WithValidation'
 import { generateRandomString } from '~/utils/utils'
 const defaultForm = {
-  typeObject: { id: null, text: null },
+  typeObject: { id: 'BANK', text: 'BANK' },
   amount: 0,
   mt5Id: ''
 }
@@ -95,18 +81,13 @@ export default {
       vForm: new Form(),
       componentKey: 0,
       isLoadingBtn: false,
-      virtualTypes: [
-        { id: 'VIRTUAL', text: 'VIRTUAL' },
-        { id: 'VOV5', text: 'VOV5' }
+      typeOptions: [
+        { id: 'BANK', text: 'BANK' },
+        { id: 'VIRTUAL', text: 'VIRTUAL' }
       ]
     }
   },
   mounted() {},
-  computed: {
-    isShowType() {
-      return this.$canPermission(DEPOSIT_SHOW_TYPE)
-    }
-  },
   methods: {
     show(item = null) {
       if (item) {

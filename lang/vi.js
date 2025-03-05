@@ -211,7 +211,6 @@ export default {
   'transaction.created_at': 'Ngày tạo giao dịch',
   'transaction.updated_at': 'Ngày cập nhật giao dịch',
   bank_name_dest: 'Ngân hàng nhận',
-  'virtual_type': 'Virtual Type',
   bank_account_number_dest: 'Số tài khoản nhận',
   bank_account_name_dest: 'Tên tài khoản nhận',
   withdrawal_crud: 'Auto rút',

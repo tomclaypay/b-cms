@@ -198,7 +198,6 @@ export default {
   'transaction.created_at': 'Transaction created at',
   'transaction.updated_at': 'Transaction updated date',
   bank_name_dest: 'Receiving bank',
-  'virtual_type': 'Virtual Type',
   bank_account_number_dest: 'Receiving account number',
   bank_account_name_dest: 'Receiving account name',
   withdrawal_crud: 'withdrawal auto',

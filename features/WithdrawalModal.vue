@@ -247,7 +247,7 @@
           :required="true"
           v-model="autoWithdrawalForm.bankNameDest"
           :options="bankNameDestOptions"
-          :searchable="true"
+          :searchable="false"
           :label="$t('bank_name_dest')"
           :data-vv-as="$t('bank_name_dest')"
           :placeholder="$t('bank_name_dest')"
@@ -259,16 +259,8 @@
         <div class="mb-5">{{ $t('bank_account_number_dest') }}</div>
         <div class="p-box mb-25">{{ withdrawal.bankAccountNumberDest }}</div>
 
-        <b-text-input-with-validation
-          v-model="autoWithdrawalForm.bankAccountNameDest"
-          :error="vForm.errors.get('bankAccountNameDest')"
-          :required="true"
-          :label="$t('bank_account_name_dest')"
-          :placeholder="$t('bank_account_name_dest')"
-          rules="required"
-          name="bankAccountNameDest"
-        />
-
+        <div class="mb-5">{{ $t('bank_account_name_dest') }}</div>
+        <div class="p-box mb-25">{{ withdrawal.bankAccountNameDest }}</div>
         <el-button
           :loading="isLoadingAutoWithdrawal"
           @click="validateAutoWithdrawalForm"
@@ -316,8 +308,7 @@ const defaultStatusForm = {
 }
 
 const defaultAutoWithdrawalForm = {
-  bankNameDest: '',
-  bankAccountNameDest: ''
+  bankNameDest: ''
 }
 
 export default {
@@ -379,12 +370,9 @@ export default {
         const { data } = await this.$axios.get('/admin/withdrawal-banks')
         if (data) {
           this.bankNameDestOptions = data.withdrawalBanks.map((bank) => {
-            const banks = bank.split('-')
-            const bankCode = banks[0]
-            const bankName = banks[1] ? banks[1] : bankCode
             return {
-              id: bankCode,
-              text: bankName
+              id: bank,
+              text: bank
             }
           })
         }
@@ -452,9 +440,9 @@ export default {
     openAutoWithdrawalModal() {
       this.visiable = false
       this.autoWithdrawalForm.bankNameDest = this.bankNameDestOptions.find(
-        (x) => x.id === this.withdrawal.bankNameDest
+        (x) => x.text === this.withdrawal.bankNameDest
       )
-      this.autoWithdrawalForm.bankAccountNameDest = this.withdrawal.bankAccountNameDest
+
       setTimeout(() => {
         this.autoWithdrawalModalVisiable = true
       }, 200)
@@ -538,8 +526,7 @@ export default {
         const { data } = await this.$axios.post(
           '/admin/withdrawals/' + this.withdrawal.id + '/auto-withdrawal',
           {
-            bankName: this.autoWithdrawalForm.bankNameDest.id,
-            bankAccountNameDest: this.autoWithdrawalForm.bankAccountNameDest
+            bankName: this.autoWithdrawalForm.bankNameDest.id
           }
         )
         this.isLoadingAutoWithdrawal = false
